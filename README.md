@@ -1,3 +1,11 @@
+**Left Ctrl + mouse move** - selecting boxes
+
+**Box top-left anchor** - anchor for dragging
+
+**Box bottom-right anchor** - anchor for resizing
+
+**Dragging workspace** - just hold mouse-down on the workspace and move
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
