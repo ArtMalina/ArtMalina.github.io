@@ -1,7 +1,7 @@
 {
   "name": "designer-app",
   "version": "0.1.0",
-  "homepage": "https://artmalina.github.io/",
+  "homepage": "./",
   "private": true,
   "dependencies": {
     "@babel/core": "7.4.3",
