@@ -1,0 +1,9 @@
+.box-item {
+    position: relative;
+
+    //  modifiers
+    &--div {
+        position: absolute;
+    }
+
+}
