@@ -15,14 +15,8 @@ const Component = Draggable(
         WrappedBlock(blockFactory.getBlock<BaseBoxProps>(BlockType.Box))
     ),
     storageServices,
-    emptyStorageSelectors
+    emptyStorageSelectors,
+    { modifiers: ['no-frame'] }
 );
-// const Component = Draggable(
-//     SelectingLasso(
-//         WrappedBlock(BoxBlock)
-//     ),
-//     storageServices,
-//     emptyStorageSelectors
-// );
 
 export default Component;

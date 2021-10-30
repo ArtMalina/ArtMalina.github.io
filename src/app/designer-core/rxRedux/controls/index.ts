@@ -5,7 +5,11 @@ import { UIPrimitive, IControlData, IState } from '@designer-core/shared/stateTy
 import { UpdateRootPosition } from './reducers/root';
 
 const UIStyles: { [key: string]: React.CSSProperties } = {
-    [UIPrimitive.RectangleBlock]: { backgroundColor: '#213c58' }
+    [UIPrimitive.RectangleBlock]: {
+        backgroundColor: '#37474f',
+        boxShadow: '0 0 6px 2px rgba(255,255,255,.1)',
+        color: '#f5f5f5'
+    }
 };
 const CONTROLS = [
     ...new Array(4)

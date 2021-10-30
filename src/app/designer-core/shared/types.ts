@@ -1,5 +1,5 @@
 import { Subject, BehaviorSubject } from 'rxjs';
-import { CSSProperties } from 'react';
+import React, { CSSProperties } from 'react';
 
 export const SELECTING_FRAME_GUID = 'selecting-frame';
 export const ROOT_GUID = 'root';
@@ -89,13 +89,19 @@ export interface BoxProps extends BaseProps {
 
 export interface DragFrameProps {
     activeLevel$: BehaviorSubject<ActiveLevels>;
+    icon?: React.ReactNode;
 }
 
 export interface DragFrameBlockProps {
     activeLevel: ActiveLevels;
 }
 
-export type ComponentWrapper<TCompProps, TResultProps> = (Component: React.ComponentType<TCompProps>) => React.ComponentType<TResultProps>;
+
+export type PluginWrapperOptions = {
+    modifiers?: string[];
+};
+
+export type ComponentWrapper<TCompProps, TResultProps> = (Component: React.ComponentType<TCompProps>, options?: PluginWrapperOptions) => React.ComponentType<TResultProps>;
 
 export type ComponentContextWrapper<TCompProps, TResultProps, TContext> = (
     Component: React.ComponentType<TCompProps>,

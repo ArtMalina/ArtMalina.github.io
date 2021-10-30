@@ -7,7 +7,8 @@ import {
     ActiveLevels,
     EventType,
     Nullable,
-    ComponentWrapper
+    ComponentWrapper,
+    PluginWrapperOptions
 } from '@designer-core/shared/types';
 
 
@@ -17,15 +18,13 @@ import { IState } from '@designer-core/shared/stateTypes';
 import { MsgService, useStorage, } from '@designer-core/shared/helpers/storage';
 
 
-const getDragWrapComponent = <TProps extends BoxProps & DragFrameProps>(
-    DragFrameWrapper: ComponentWrapper<TProps, TProps>
-) =>
+const getDragWrapComponent = <TProps extends BoxProps & DragFrameProps>(DragFrameWrapper: ComponentWrapper<TProps, TProps>) =>
     <TContext extends IMouseStreamContext>(
         MouseStreamContext: React.Context<Nullable<TContext>>,
         getHandlers: (elementId: GuidType, mContext: TContext) => React.DOMAttributes<HTMLElement>
-    ) => (Component: React.ComponentType<TProps>, services: MsgService<IState, any>[], _selectors: any) => {
+    ) => (Component: React.ComponentType<TProps>, services: MsgService<IState, any>[], _selectors: any, options?: PluginWrapperOptions) => {
 
-        const MovingComponent = DragFrameWrapper(Component);
+        const MovingComponent = DragFrameWrapper(Component, options);
 
         const ResultComponent = (props: React.PropsWithChildren<TProps>) => {
 

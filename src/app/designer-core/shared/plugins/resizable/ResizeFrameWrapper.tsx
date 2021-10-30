@@ -11,6 +11,16 @@ import { IContextResizer } from './context';
 export const [MIN_WIDTH, MIN_HEIGHT] = [60, 60];
 
 
+const RESIZE_ICON = <svg className="anchor_icon anchor_icon--resize" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="currentColor">
+    <line fill="none" stroke="currentColor" strokeWidth="2" strokeMiterlimit="10" x1="6" y1="26" x2="26" y2="6" />
+    <polyline fill="none" stroke="currentColor" strokeWidth="2" strokeMiterlimit="10" points="13,27 5,27 5,19 " />
+    <polyline fill="none" stroke="currentColor" strokeWidth="2" strokeMiterlimit="10" points="19,5 27,5 27,13 " />
+    <line fill="none" stroke="currentColor" strokeWidth="2" strokeMiterlimit="10" x1="6" y1="6" x2="26" y2="26" />
+    <polyline fill="none" stroke="currentColor" strokeWidth="2" strokeMiterlimit="10" points="5,13 5,5 13,5 " />
+    <polyline fill="none" stroke="currentColor" strokeWidth="2" strokeMiterlimit="10" points="27,19 27,27 19,27 " />
+</svg>;
+
+
 const ResizeWrapper =
     <TProps extends BoxProps, TContext extends IMouseStreamContext & IContextResizer>(
         Component: React.ComponentType<TProps>, MouseStreamContext: React.Context<TContext>
@@ -47,7 +57,7 @@ const ResizeWrapper =
                     { props.children }
                     {
                         (activeLevel === ActiveLevels.Hover || activeLevel === ActiveLevels.HoverInGroup)
-                        && <AnchorBlock { ...props } handlers={ { ...anchorHandler } } classModifiers={ [...activeLevelArr] } />
+                        && <AnchorBlock { ...props } handlers={ { ...anchorHandler } } classModifiers={ [...activeLevelArr] } icon={ RESIZE_ICON } />
                     }
                 </Component>
             );

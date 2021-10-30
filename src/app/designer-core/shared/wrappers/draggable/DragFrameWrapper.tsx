@@ -6,7 +6,7 @@ import BoxBlock from '@designer-core/shared/blocks/Box';
 import DragFrameBlock from '@designer-core/shared/blocks/DragFrame';
 import AnchorBlock from '@designer-core/shared/blocks/Anchor';
 
-import { SELECTING_FRAME_GUID, ROOT_GUID, BoxProps, DragFrameProps, ActiveLevels, Position, IMouseStreamContext } from '@designer-core/shared/types';
+import { SELECTING_FRAME_GUID, ROOT_GUID, BoxProps, DragFrameProps, ActiveLevels, Position, IMouseStreamContext, PluginWrapperOptions } from '@designer-core/shared/types';
 
 import { MouseStreamContext } from '../MouseStreams';
 
@@ -19,8 +19,12 @@ type DragResultProps<TProps> = DragFrameProps & TProps;
 
 const DisplayedBlock = WrappedBlock(BoxBlock);
 
+const DRAG_ICON = <svg className="anchor_icon anchor_icon--move" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
+    <path fillRule="evenodd" d="M7.646.146a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1-.708.708L8.5 1.707V5.5a.5.5 0 0 1-1 0V1.707L6.354 2.854a.5.5 0 1 1-.708-.708l2-2zM8 10a.5.5 0 0 1 .5.5v3.793l1.146-1.147a.5.5 0 0 1 .708.708l-2 2a.5.5 0 0 1-.708 0l-2-2a.5.5 0 0 1 .708-.708L7.5 14.293V10.5A.5.5 0 0 1 8 10zM.146 8.354a.5.5 0 0 1 0-.708l2-2a.5.5 0 1 1 .708.708L1.707 7.5H5.5a.5.5 0 0 1 0 1H1.707l1.147 1.146a.5.5 0 0 1-.708.708l-2-2zM10 8a.5.5 0 0 1 .5-.5h3.793l-1.147-1.146a.5.5 0 0 1 .708-.708l2 2a.5.5 0 0 1 0 .708l-2 2a.5.5 0 0 1-.708-.708L14.293 8.5H10.5A.5.5 0 0 1 10 8z" />
+</svg>;
+
 const DragFrameWrapper =
-    <TProps extends BoxProps>(Component: React.ComponentType<TProps & Partial<DragFrameProps>>) => {
+    <TProps extends BoxProps>(Component: React.ComponentType<TProps & Partial<DragFrameProps>>, options?: PluginWrapperOptions) => {
 
         const ResultBlock = (props: React.PropsWithChildren<DragResultProps<TProps>>) => {
 
@@ -34,6 +38,8 @@ const DragFrameWrapper =
             const [newSize] = useSubscribedState(size$);
 
             const activeLevelRef = useRef(activeLevel$.getValue());
+
+            const [activeLevel, setActiveLevelState] = useState(activeLevel$.getValue());
 
             const emptyPosition$ = useMemo(() => new BehaviorSubject<Position>([0, 0]), []);
 
@@ -102,7 +108,6 @@ const DragFrameWrapper =
                             // Leave
                             level = activeLevelRef.current;
                         }
-
                         activeLevel$.next(level);
 
                         setAnchorActivation(type === 1);
@@ -113,14 +118,25 @@ const DragFrameWrapper =
                 };
             }, [guid, hover$, mouseContext, activeLevel$, activeLevelRef]);
 
-            const activeLevel = activeLevel$.getValue();
+
+            useEffect(() => {
+                const sub = activeLevel$.subscribe((level) => {
+                    console.log('drag activeLevel ' + guid, level);
+                    setActiveLevelState(level);
+                });
+                return () => sub.unsubscribe();
+            }, [guid, activeLevel$]);
+
 
             const hoverableArr = guid !== ROOT_GUID ? ['hoverable'] : [];
-            const dragClassModifiers = activeLevel ? [...hoverableArr, 'draggable', 'drag-start'] : [...hoverableArr, 'draggable'];
+            const dragClassModifiers = activeLevel === ActiveLevels.MoveByHand || activeLevel === ActiveLevels.Hover ? [...hoverableArr, 'draggable', 'drag-start'] : [...hoverableArr, 'draggable'];
             const innerClassModifiers = props.classModifiers || [];
-            const classModifiers = activeLevel ? [...innerClassModifiers, 'wrapped-by-drag'] : [...innerClassModifiers];
+            const classModifiers = [...innerClassModifiers, 'wrapped-by-drag'];
 
             const isDraggableComponent = guid !== ROOT_GUID && guid !== SELECTING_FRAME_GUID;
+
+            const optionsModifiers = options ? options.modifiers || [] : [];
+            const baseClassModifiers = [...innerClassModifiers, ...optionsModifiers];
 
             return <DisplayedBlock
                 { ...props }
@@ -128,7 +144,7 @@ const DragFrameWrapper =
                 activeLevel={ activeLevel }
                 handlers={ { ...updHandlers } }
                 classModifiers={ dragClassModifiers }>
-                <DragFrameBlock { ...baseProps } activeLevel={ activeLevel } handlers={ null } size={ [newSize[0], newSize[1]] } xy={ [0, 0] } position={ [0, 0] }>
+                <DragFrameBlock { ...baseProps } classModifiers={ baseClassModifiers } activeLevel={ activeLevel } handlers={ null } size={ [newSize[0], newSize[1]] } xy={ [0, 0] } position={ [0, 0] }>
                     {
                         isDraggableComponent
                         && activeLevel !== ActiveLevels.MoveInGroup
@@ -137,6 +153,7 @@ const DragFrameWrapper =
                             { ...props }
                             handlers={ { ...anchorHandler } }
                             activeLevel={ activeLevel }
+                            icon={ DRAG_ICON }
                             classModifiers={ isAnchorActive && isDraggableComponent ? ['active'] : [] }
                         />
                     }
